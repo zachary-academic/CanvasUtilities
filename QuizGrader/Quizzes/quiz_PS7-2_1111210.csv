@@ -1,0 +1,38 @@
+180,,,
+"Question 1","21648073","Out of 3",
+,"1",0,"The answer must be greater than 1."
+,"2",0,"The numbers 20! and 2 have a gcd that is greater than 1 (for example, 2)."
+,"20",0,"The numbers 20! and 20 have a gcd that is greater than 1 (for example, 20)."
+,"20!+1",0,"WOW!  That's a large number.  How did you get that?"
+,"20639383",0,"This number is too large."
+,"21",0,"The numbers 20! and 21 have a gcd that is greater than 1 (for example, 3)."
+,"23",3,
+,"2432902008176640000",0,"WOW!  That's a large number.  How did you get that?"
+,"29",0,"This is not the smallest."
+,"3",0,"The numbers 20! and 3 have a gcd that is greater than 1 (for example, 3)."
+,"41",0,"This is not the smallest."
+,,,
+"Question 3","21648075","Out of 3",
+,"5",0,
+,"7",3,
+,"9",0,
+,,,
+"Question 4","21648076","Out of 3",
+,"1",0,
+,"118",0,
+,"121",0,
+,"122",0,
+,"31",0,
+,"4",0,
+,"5",0,
+,"59",1,"Almost correct.  I'll give you partial credit."
+,"6",0,
+,"60",1,"Almost correct.  I'll give you partial credit."
+,"61",2,"Almost correct.  I'll give you partial credit."
+,"62",3,
+,"63",3,
+,"64",3,
+,"65",2,"Almost correct.  I'll give you partial credit."
+,"73",0,
+,"94",0,
+,"96",0,

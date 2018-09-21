@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KattisGrading", "KattisGrading\KattisGrading.csproj", "{4CAD4026-6E86-46A3-8551-856AE11EC6AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LateDaysRecorder", "LateDaysRecorder\LateDaysRecorder.csproj", "{E8751C97-DDB8-4D22-B66E-B617BE014720}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssignmentLabeler", "AssignmentLabeler\AssignmentLabeler.csproj", "{275FA2C2-9C7E-4AFC-BFE9-DFF19E655D5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradingScriptGenerator", "GradingScriptGenerator\GradingScriptGenerator.csproj", "{1171012F-D00A-4FF8-A56F-21889F873340}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groups", "Groups\Groups.csproj", "{17940B59-2DC1-40B4-8893-2BA27B806D70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizGrader", "QuizGrader\QuizGrader.csproj", "{A51F938D-3C7E-497E-8FE1-3285A60DF23F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4CAD4026-6E86-46A3-8551-856AE11EC6AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CAD4026-6E86-46A3-8551-856AE11EC6AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CAD4026-6E86-46A3-8551-856AE11EC6AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CAD4026-6E86-46A3-8551-856AE11EC6AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8751C97-DDB8-4D22-B66E-B617BE014720}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8751C97-DDB8-4D22-B66E-B617BE014720}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8751C97-DDB8-4D22-B66E-B617BE014720}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8751C97-DDB8-4D22-B66E-B617BE014720}.Release|Any CPU.Build.0 = Release|Any CPU
+		{275FA2C2-9C7E-4AFC-BFE9-DFF19E655D5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{275FA2C2-9C7E-4AFC-BFE9-DFF19E655D5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{275FA2C2-9C7E-4AFC-BFE9-DFF19E655D5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{275FA2C2-9C7E-4AFC-BFE9-DFF19E655D5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1171012F-D00A-4FF8-A56F-21889F873340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1171012F-D00A-4FF8-A56F-21889F873340}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1171012F-D00A-4FF8-A56F-21889F873340}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1171012F-D00A-4FF8-A56F-21889F873340}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17940B59-2DC1-40B4-8893-2BA27B806D70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17940B59-2DC1-40B4-8893-2BA27B806D70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17940B59-2DC1-40B4-8893-2BA27B806D70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17940B59-2DC1-40B4-8893-2BA27B806D70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A51F938D-3C7E-497E-8FE1-3285A60DF23F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A51F938D-3C7E-497E-8FE1-3285A60DF23F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A51F938D-3C7E-497E-8FE1-3285A60DF23F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A51F938D-3C7E-497E-8FE1-3285A60DF23F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {321B8489-F043-4459-BDBD-5C9F8D4FE8FD}
+	EndGlobalSection
+EndGlobal

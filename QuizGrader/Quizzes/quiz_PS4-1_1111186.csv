@@ -1,0 +1,214 @@
+184,,,
+"Question 1",21647922,"Out of 3",
+,0,0,
+,1,0,
+,2,0,
+,3,0,
+,4,0,
+,5,3,
+,6,0,
+,7,0,
+,8,0,
+,,,
+"Question 2",21647923,"Out of 3",
+,1,0,
+,2,0,
+,3,0,
+,4,3,
+,5,0,
+,6,0,
+,8,0,
+,,,
+"Question 3",21647924,"Out of 3",
+,0,0,
+,1,0,
+,2,0,
+,3,3,
+,4,0,
+,5,0,
+,8,0,
+,,,
+"Question 4",21647925,"Out of 5",
+,"((2^k)-1)+((2^k)+2)",0,
+,"((k-1)*2^k)+1",5,"Correct"
+,"((k-1)^2)+2k-1",0,
+,"(2)2^k-2",0,
+,"(2^2k-2^k)/2",0,
+,"(2^k(k-1))+1",5,"Correct"
+,"(2^k)((2^k)-1)/2",0,
+,"(2^k)(k-1)+1",5,
+,"(2^k)/2",0,
+,"(2^k)+1",0,
+,"(2^k)k",1,"Almost correct"
+,"(2^k)k-2^k+1",5,"Correct"
+,"(2^k)log(2^k)",0,
+,"(2^k)log_(2^k)",0,
+,"(3)2^(k-1)",0,
+,"(3)2^(k-1)-1",0,
+,"(k(2^k))-((2^k)-1)",5,"Correct"
+,"(k)2^k",1,"Almost correct"
+,"(k)2^k-1",1,"Almost correct"
+,"(k)2^k-2^k+1",5,
+,"(k)2^k-2^k-1",4,"Almost correct – you should've added 1 instead of subtracted."
+,"(k/2)log(k)",0,
+,"(k-1)(2^k) + 1",5,"Correct"
+,"(k-1)(2^k)+1",5,"Correct"
+,"(k-1)(2k+1)",4,"Almost correct – you forgot the carrot ^"
+,"(k-1)*2^(k)+1",5,"Correct"
+,"(k-1)2^(k)-1",4,"Almost correct – you should've added 1 instead of subtracted."
+,"(k-1)2^k + 1",5,"Correct"
+,"(k-1)2^k+1",5,
+,"(k-1)2^k=1",4,"Almost correct – you should've put the + sign instead of the = sign."
+,0,0,
+,"1/2klog(k)",0,
+,2,0,
+,"2(k-1)2^k",2,"Almost correct"
+,"2^(2k-1) - 2^(k-1)",0,
+,"2^(k+1)-k-2",0,
+,"2^(k-1)k+2^(k-2)k-k/2",0,
+,"2^2k -2^k",0,
+,"2^k",0,
+,"2^k * (k-1) + 1",5,"Correct"
+,"2^k -1",0,
+,"2^k(2^k-1)/2",0,
+,"2^k(k-1) + 1",5,"Correct"
+,"2^k(k-1)+1",5,"Correct"
+,"2^k(log(2^k))",0,
+,"2^k*(k-1)+1",5,"Correct"
+,"2^k*2k",0,
+,"2^k/2+2^k-1",0,
+,"2^k+1",0,
+,"2^k+k+1",0,
+,"2^k+k-1",0,
+,"2^k-1",0,
+,"2^k-k",0,
+,"2^k-k-1",0,
+,"2^kk-2^k+1",5,"Correct"
+,"2^klog(2^k)",0,
+,"2^klog(2^k)-2^(log2^k)+1",0,
+,"2k",0,
+,"k",0,
+,"k(2^k)",0,
+,"k(2^k)-(2^k)+1",5,"Correct"
+,"k(2^k)-2^k+1",5,"Correct"
+,"k(2^k)-2^k-1",4,"Almost correct – you should've added 1 instead of subtracted."
+,"k(k-1)/2",0,
+,"k^2+k-1",0,
+,"k-1",0,
+,"k2^(k-1)",0,
+,"k2^(k-1)-2^(k-1)+2^k-1",0,
+,"k2^k",0,
+,"k2^k-1",0,
+,"k2^k-2^k+1",5,
+,"k2^k-2^k-1",4,"Almost correct – you should've added 1 instead of subtracted."
+,"k2^k-k+1",2,"Almost correct"
+,"log((2^k)!)",0,
+,"log(k)",0,
+,"log_2(2^k!)+1",0,
+,"log_2(2^k)",0,
+,"log_2(2^k)+1",0,
+,"log_2(k)",0,
+,,,
+"Question 5",21647926,"Out of 5",
+,"((k-2)^2)+k+1",0,
+,"(2)2^k/2",0,
+,"(2)2^k-2",0,
+,"(2^(k-1))k",5,"Correct"
+,"(2^k -1) * k",4,"Almost correct – (k-1) should be in parentheses."
+,"(2^k)*k",3,"Almost correct"
+,"(2^k)+(2^k-1)",0,
+,"(2^k)-1",0,
+,"(2^k)k",3,"Almost correct"
+,"(2^k)log(2^k)",0,
+,"(2^k)log_(2^k)",0,
+,"(2k)^(2k-1)",0,
+,"(k)(2^k)/2",0," "
+,"(k)2^(k-1)",5,
+,"(k)2^k",2,"Almost correct"
+,"(k)2^k-2^k+1",0,
+,"(k)2^k-2k+1",0,
+,"(k/2)2^k",0,
+,"(k2^k)/2",0,
+,0,0,
+,"0.5k2^k",0,
+,"1/2k2^k",0,
+,"1/2klog(k)",0,
+,"2^(2k-1) - 2^(k-1)",0,
+,"2^(k-1)",0,
+,"2^(k-1)(k)",5,"Correct"
+,"2^(k-1)*k",5,"Correct"
+,"2^(k-1)k",5,"Correct"
+,"2^(k-1)K",5,"Correct"
+,"2^k",0,
+,"2^k - 2",0,
+,"2^k -1",0,
+,"2^k-(1/2)",0,
+,"2^k(k-1)+1",0,
+,"2^k(log(2^k))",0,
+,"2^k/2",0,
+,"2^k-1",0,
+,"2^k-3k/2-1",0,
+,"2^klog(2^k)",0,
+,"2^klog(2^k)-2^(log2^k)",0,
+,"2k",0,
+,"2k+1",0,
+,4,0,
+,"k",0,
+,"k(2^(k-1))",5,"Correct"
+,"k(2^k)",3,"Almost correct"
+,"k(2^k/2)",3,"Almost correct"
+,"k(2^k-1)",4,"Almost correct – (k-1) should be in parentheses."
+,"k(2^k-k)",0,
+,"k*(2^(k-1))",5,"Correct"
+,"k*(2^k/2)",3,"Almost correct"
+,"k*2^(k-1)",5,"Correct"
+,"k^2",0,
+,"k-1",0,
+,"k2^(k-1)",5,
+,"k2^k",3,"Almost correct"
+,"k2^k-(2^k-1)",0,
+,"k2^k-2k+1",0,
+,"log((2^k)!)-1",0,
+,"log(k)",0,
+,"log_2(2^k!)",0,
+,"log_2(2^k)",0,
+,"log_2(k)",0,
+,,,
+"Question 6",21647927,"Out of 5",
+,"(2^k) - 1",5,"Correct"
+,"(2^k)-1",5,"Correct"
+,0,0,
+,1,0,
+,"12^k",0,
+,"2(2^k)-1",2,"Almost correct"
+,"2(log_2(2^k))+1",0,
+,"2^(k)-1",5,"Correct"
+,"2^(k+1)-2",0,
+,"2^(k+1)-k-2",0,
+,"2^(k-1)",0,
+,"2^(k-1)(2^k+1)",0,
+,"2^(k-1)+log_2(2^(k-1))",0,
+,"2^(k-1)-1",2,"Almost correct"
+,"2^k",2,"Almost correct"
+,"2^k - 1",5,"Correct"
+,"2^k -1",5,"Correct"
+,"2^k(log(2^k)-2^(log(2^k)+1",0,
+,"2^k/2+1",0,
+,"2^k-1",5,
+,"2^klog(2^k)",0,
+,"2^klog(2^k)-2^(log2^k)-k",0,
+,"2k",0,
+,"2k - 1",5,"Correct"
+,"2k-1",2,"Almost correct – you forgot the carrot ^"
+,3,0,
+,"k",0,
+,"k+1",0,
+,"k-1",0,
+,"k2^(k-1)-2^(k-1)+1",0,
+,"k2^k",0,
+,"klog(k)",0,
+,"klogk",0,
+,"log(k)",0,
+,"log_2(2^k!)-1",0,
+,"log_2(2^k)",0,
+,"log_2(k)-1",0,
