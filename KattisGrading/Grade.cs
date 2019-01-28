@@ -25,25 +25,33 @@ namespace KattisGrading
 
         public int Score { get; }
 
+        public DateTime DueDate { get; private set; }
+
+        public DateTime LockDate { get; private set; }
+
         private string Plural(string v, int n)
         {
             return (n == 1) ? v : (v + "s");
         }
 
-        public Grade(dynamic submission, Problem problem)
+        public Grade(dynamic submission, Problem problem, DateTime dueDate, DateTime lockDate)
         {
             SubmitTime = submission.time;
+            DueDate = dueDate;
+            LockDate = lockDate;
             Language = submission.language;
             Runtime = submission.runtime;
             TestsPassed = GetTestsPassed(submission);
-            ExtraDaysUsed = GetDaysLate(problem.DueDate, SubmitTime);
+            ExtraDaysUsed = GetDaysLate(dueDate, SubmitTime);
             Score = GetScore(problem);
             Comment = GetComment(problem);
         }
 
-        public Grade(Problem problem)
+        public Grade(Problem problem, DateTime dueDate, DateTime lockDate)
         {
             SubmitTime = Convert.ToDateTime("01-01-2000");
+            DueDate = dueDate;
+            LockDate = lockDate;
             Language = "Unknown";
             Runtime = "Unknown";
             TestsPassed = 0;
@@ -143,6 +151,7 @@ namespace KattisGrading
                 string email = student.email.ToString();
                 int index = email.IndexOf("@utah.edu");
                 if (index < 0) index = email.IndexOf("@umail.utah.edu");
+                if (index < 0) index = email.IndexOf("@utah.umail.edu");
                 if (index < 0) continue;
                 string unid = email.Substring(0, index).ToLower();
                 history[unid] = student;
@@ -152,23 +161,23 @@ namespace KattisGrading
         /// <summary>
         /// Get the maximum number of test cases passed by each student by the due date plus extra days.
         /// <summary>
-        public Grade GetGrade(string unid, string problemName, Problem problem)
+        public Grade GetGrade(string unid, string problemName, Problem problem, DateTime dueDate, DateTime lockDate)
         {
             dynamic student;
             if (!history.TryGetValue(unid, out student))
             {
-                return new Grade(problem);
+                return new Grade(problem, dueDate, lockDate);
             }
 
-            Grade grade = new Grade(problem);
+            Grade grade = new Grade(problem, dueDate, lockDate);
             foreach (dynamic submission in student.submissions)
             {
                 if (submission.problem == problemName)
                 {
                     DateTime submissionTime = Convert.ToDateTime((string)submission.time);
-                    if (submissionTime <= problem.LockDate && submissionTime >= problem.StartDate)
+                    if (submissionTime <= lockDate && submissionTime >= problem.StartDate)
                     {
-                        Grade g = new Grade(submission, problem);
+                        Grade g = new Grade(submission, problem, dueDate, lockDate);
                         if (g.TestsPassed > grade.TestsPassed)
                         {
                             grade = g;

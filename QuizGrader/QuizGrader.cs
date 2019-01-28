@@ -10,42 +10,17 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Authentication;
 
 namespace QuizGrader
 {
-    /// <summary>
-    /// To use:
-    /// (1) Set TOKEN
-    /// (2) Set courseID
-    /// (3) Set quizID
-    /// </summary>
-    class GradeRecorder
+    public static class GradeRecorder
     {
-        // Canvas acccess token
-        private static string TOKEN = "";
-
-        // Spring 2018
-        private static string courseID = "475628";
-
         // Current quiz name
         private static string quizName;
 
         // Current quiz number (not assignment number)
         private static string quizID;
-
-        /// <summary>
-        /// Creates an HttpClient for communicating with Canvas.
-        /// </summary>
-        public static HttpClient CreateClient()
-        {
-            CookieContainer cookies = new CookieContainer();
-            HttpClient client = new HttpClient(new WebRequestHandler() { CookieContainer = cookies })
-            {
-                BaseAddress = new Uri("https://utah.instructure.com")
-            };
-            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + TOKEN);
-            return client;
-        }
 
         /// <summary>
         /// Returns the URL used to get next page of results or null
@@ -163,12 +138,12 @@ namespace QuizGrader
                 }
                 else
                 {
-                    using (HttpClient client = CreateClient())
+                    using (HttpClient client = CanvasHttp.MakeClient())
                     {
-                        String url = String.Format("/api/v1/courses/{0}/quizzes/{1}/submissions/{2} ", courseID, quizID, submission.Id);
+                        String url = String.Format("/api/v1/courses/{0}/quizzes/{1}/submissions/{2} ", Auth.COURSE_ID, quizID, submission.Id);
                         var content = new StringContent(correction.ToString(), Encoding.UTF8, "application/json");
-                        //HttpResponseMessage response = client.PutAsync(url, content).Result;
-                        HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+                        HttpResponseMessage response = client.PutAsync(url, content).Result;
+                        //HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
 
                         if (response.IsSuccessStatusCode)
                         {
@@ -235,9 +210,9 @@ namespace QuizGrader
 
         private static string GetCourseName()
         {
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/api/v1/courses/{0}", courseID);
+                string url = String.Format("/api/v1/courses/{0}", Auth.COURSE_ID);
                 HttpResponseMessage response = client.GetAsync(url).Result;
                 if (response.IsSuccessStatusCode)
                 {
@@ -346,9 +321,9 @@ namespace QuizGrader
 
         private static AllAttempts GetAllAttempts(List<Question> questions)
         {
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/api/v1/courses/{0}/quizzes/{1}/reports", courseID, quizID);
+                string url = String.Format("/api/v1/courses/{0}/quizzes/{1}/reports", Auth.COURSE_ID, quizID);
                 var inputs = new Dictionary<string, string>();
                 inputs["quiz_report[report_type]"] = "student_analysis";
                 inputs["quiz_report[includes_all_versions]"] = "true";
@@ -396,9 +371,9 @@ namespace QuizGrader
         private static List<string> GetQuizIDs(string quizName)
         {
             List<string> quizIDs = new List<string>();
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/api/v1/courses/{0}/quizzes?search_term={1}&per_page=100", courseID, quizName);
+                string url = String.Format("/api/v1/courses/{0}/quizzes?search_term={1}&per_page=100", Auth.COURSE_ID, quizName);
                 while (url != null)
                 {
                     HttpResponseMessage response = client.GetAsync(url).Result;
@@ -433,9 +408,9 @@ namespace QuizGrader
         private static List<Question> GetQuestions()
         {
             List<Question> questions = new List<Question>();
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/api/v1/courses/{0}/quizzes/{1}/questions?per_page=100", courseID, quizID);
+                string url = String.Format("/api/v1/courses/{0}/quizzes/{1}/questions?per_page=100", Auth.COURSE_ID, quizID);
                 while (url != null)
                 {
                     HttpResponseMessage response = client.GetAsync(url).Result;
@@ -469,9 +444,9 @@ namespace QuizGrader
         private static List<Submission> GetSubmissions()
         {
             List<Submission> submissions = new List<Submission>();
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/api/v1/courses/{0}/quizzes/{1}/submissions?per_page=100", courseID, quizID);
+                string url = String.Format("/api/v1/courses/{0}/quizzes/{1}/submissions?per_page=100", Auth.COURSE_ID, quizID);
                 while (url != null)
                 {
                     HttpResponseMessage response = client.GetAsync(url).Result;
@@ -506,9 +481,9 @@ namespace QuizGrader
         /// <param name="answers"></param>
         private static void AddAnswers(Submission submission, IList<Question> questions, Dictionary<int, SortedSet<string>> answers)
         {
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/courses/{0}/quizzes/{1}/history?headless=1&user_id={2}&version={3}", courseID, quizID, submission.UserId, submission.Attempt);
+                string url = String.Format("/courses/{0}/quizzes/{1}/history?headless=1&user_id={2}&version={3}", Auth.COURSE_ID, quizID, submission.UserId, submission.Attempt);
                 HttpResponseMessage response = client.GetAsync(url).Result;
                 if (response.IsSuccessStatusCode)
                 {
@@ -544,9 +519,9 @@ namespace QuizGrader
 
         private static List<KeyValuePair<string, string>> GetInputs(Submission submission, IList<Question> questions)
         {
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/courses/{0}/quizzes/{1}/history?headless=1&hide_student_name=0&score_updated=1&user_id={2}&version={3}", courseID, quizID, submission.UserId, submission.Attempt);
+                string url = String.Format("/courses/{0}/quizzes/{1}/history?headless=1&hide_student_name=0&score_updated=1&user_id={2}&version={3}", Auth.COURSE_ID, quizID, submission.UserId, submission.Attempt);
                 HttpResponseMessage response = client.GetAsync(url).Result;
                 if (response.IsSuccessStatusCode)
                 {

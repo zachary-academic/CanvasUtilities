@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Authentication;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,7 +14,6 @@ namespace KattisGrading
     public class Problem
     {
         public string CourseID { get; set; }
-        public string AssignID { get; set; }
         public int PrivateTests { get; set; }
         public int PublicTests { get; set; }
         public DateTime DueDate { get; set; }
@@ -37,35 +36,11 @@ namespace KattisGrading
 
     class GradeRecorder
     {
-        // Time before which submissions are ignored
-        private static string startTime = "01/01/2018";
-
-        // Canvas acccess token
-        private static string TOKEN = "";
-
-        // Kattis login name
-        private static string KATTIS_LOGIN = "";
-
-        // Kattis password
-        private static string KATTIS_PASSWORD = "";
-
-        // Name of course on Kattis
-        private static string KATTIS_COURSE = "CS4150";
-
-        // Name of semester on Kattis
-        private static string KATTIS_SEMESTER = "S18";
-
         // Set of Kattis problems that will be assigned
         private static Dictionary<string, Problem> problems = new Dictionary<string, Problem>();
 
-        // Canvas course ID
-        private static string courseID = "475628";
-
-        // Name of assignment from problems dictionary
-        private static string assignName = "utah.anagram";
-
         // Compare grades during run?
-        private static bool compareGrades = true;
+        private static bool compareGrades = false;
 
         // Record grades during run?
         private static bool recordGrades = false;
@@ -76,7 +51,6 @@ namespace KattisGrading
             problems.Add("utah.anagram",
                 new Problem()
                 {
-                    AssignID = "4525831",
                     PublicTests = 2,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -86,7 +60,6 @@ namespace KattisGrading
             problems.Add("ceiling",
                 new Problem()
                 {
-                    AssignID = "3660340",
                     PublicTests = 2,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -96,7 +69,6 @@ namespace KattisGrading
             problems.Add("utah.galaxyquest",
                 new Problem()
                 {
-                    AssignID = "3660341",
                     PublicTests = 2,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -106,7 +78,6 @@ namespace KattisGrading
             problems.Add("utah.autosink",
                 new Problem()
                 {
-                    AssignID = "3660342",
                     PublicTests = 2,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -116,7 +87,6 @@ namespace KattisGrading
             problems.Add("utah.rumormill",
                 new Problem()
                 {
-                    AssignID = "3660343",
                     PublicTests = 2,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -126,17 +96,15 @@ namespace KattisGrading
             problems.Add("getshorty",
                 new Problem()
                 {
-                    AssignID = "3660345",
                     PublicTests = 1,
                     PublicPct = 0,
                     PrivatePct = .50,
-                    SkipUsers = { "u0831180" }
+                    SkipUsers = {  }
                 });
 
             problems.Add("utah.numbertheory",
                 new Problem()
                 {
-                    AssignID = "3660346",
                     PublicTests = 1,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -146,7 +114,6 @@ namespace KattisGrading
             problems.Add("bank",
                 new Problem()
                 {
-                    AssignID = "3660347",
                     PublicTests = 2,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -156,7 +123,6 @@ namespace KattisGrading
             problems.Add("utah.rainbow",
                 new Problem()
                 {
-                    AssignID = "3660348",
                     PublicTests = 2,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -166,7 +132,6 @@ namespace KattisGrading
             problems.Add("narrowartgallery",
                 new Problem()
                 {
-                    AssignID = "3660336",
                     PublicTests = 3,
                     PublicPct = .10,
                     PrivatePct = .50,
@@ -176,7 +141,6 @@ namespace KattisGrading
             problems.Add("spiderman",
                 new Problem()
                 {
-                    AssignID = "3844932",
                     PublicTests = 1,
                     PublicPct = 0,
                     PrivatePct = .50,
@@ -186,17 +150,11 @@ namespace KattisGrading
             problems.Add("utah.tsp",
                 new Problem()
                 {
-                    AssignID = "3660338",
                     PublicTests = 2,
                     PublicPct = .166667,
                     PrivatePct = .75,
                     SkipUsers = { }
                 });
-
-
-            // Obtain problem information
-            problem = problems[assignName];
-            problem.StartDate = Convert.ToDateTime(startTime);
         }
 
         // The current problem
@@ -217,7 +175,7 @@ namespace KattisGrading
         /// <summary>
         /// Pads out s to be a uNID
         /// </summary>
-        private static string ToUnid (String s)
+        private static string ToUnid(String s)
         {
             while (s.Length < 7)
             {
@@ -233,7 +191,7 @@ namespace KattisGrading
         {
             // Create a client, customizing redirect and authorization behavior
             HttpClient client = new HttpClient(new WebRequestHandler() { AllowAutoRedirect = (aspects & REDIRECT) > 0, CookieContainer = cookies });
-            if ((aspects & AUTH) > 0) client.DefaultRequestHeaders.Add("Authorization", "Bearer " + TOKEN);
+            if ((aspects & AUTH) > 0) client.DefaultRequestHeaders.Add("Authorization", "Bearer " + Auth.TOKEN);
             return client;
         }
 
@@ -252,22 +210,38 @@ namespace KattisGrading
             }
         }
 
+
+        private static String GetKattisProblemName(string html)
+        {
+            Regex r = new Regex(@"""https://utah.kattis.com/problems/([^""]+)\""");
+            Match m = r.Match(html);
+            if (m.Success)
+            {
+                return m.Groups[1].ToString();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Obtains the logs
         /// </summary>
         public static void Main(string[] args)
         {
-            // Get the course name
-            String courseName = "";
+            // Get the course name and the Kattis problem
+            String courseName;
             using (HttpClient client = CreateClient(REDIRECT))
             {
-                string url = String.Format("https://utah.instructure.com/api/v1/courses/{0}", courseID);
+                string url = String.Format("https://utah.instructure.com/api/v1/courses/{0}", Auth.COURSE_ID);
                 HttpResponseMessage response = client.GetAsync(url).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
                     dynamic resp = JObject.Parse(response.Content.ReadAsStringAsync().Result);
                     courseName = resp.name;
+                    Console.WriteLine("Grading Kattis problem for " + courseName);
                 }
                 else
                 {
@@ -278,10 +252,67 @@ namespace KattisGrading
                 }
             }
 
+            // Get the assignment ID
+            string assignID;
+            {
+                Console.Write("Enter assignment name: ");
+                string assignName = Console.ReadLine();
+                List<string> assignmentIDs = CanvasHttp.GetAssignmentIDs(assignName);
+                if (assignmentIDs.Count == 0)
+                {
+                    Console.WriteLine("There is no assigment by that name");
+                    return;
+                }
+                else if (assignmentIDs.Count > 1)
+                {
+                    Console.WriteLine("There are " + assignmentIDs.Count + " assignments by that name");
+                    return;
+                }
+                else
+                {
+                    assignID = assignmentIDs[0];
+                }
+            }
+
+            // Get the Kattis problem name
+            string problemName;
+            using (HttpClient client = CreateClient(REDIRECT))
+            {
+                string url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/assignments/{1}", Auth.COURSE_ID, assignID);
+                HttpResponseMessage response = client.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    dynamic resp = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+                    problemName = GetKattisProblemName(resp.description.ToString());
+                    if (problemName == null)
+                    {
+                        Console.WriteLine("No Kattis problem referenced from the problem");
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Grading Kattis problem " + problemName);
+                        problem = problems[problemName];
+                        problem.StartDate = Convert.ToDateTime(Auth.START_TIME).ToLocalTime();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Error: " + response.StatusCode);
+                    Console.WriteLine(response.ReasonPhrase.ToString());
+                    Console.WriteLine("Unable to read assignment");
+                    return;
+                }
+            }
+
+            // Due date overrides
+            Dictionary<int, Tuple<DateTime, DateTime>> overrides = new Dictionary<int, Tuple<DateTime, DateTime>>();
+
             // Get the due dates and assignment name
             using (HttpClient client = CreateClient(AUTH))
             {
-                String url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/assignments/{1}", courseID, problem.AssignID);
+                String url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/assignments/{1}?include[]=overrides", Auth.COURSE_ID, assignID);
                 HttpResponseMessage response = client.GetAsync(url).Result;
 
                 if (response.IsSuccessStatusCode)
@@ -292,9 +323,17 @@ namespace KattisGrading
                     problem.MaxGrade = Convert.ToInt32(resp.points_possible.ToString());
                     Console.WriteLine("Assignment: " + resp.name);
                     Console.WriteLine("Start Date: " + problem.StartDate);
-                    Console.WriteLine("Due Date: " + problem.DueDate);
-                    Console.WriteLine("Lock Date: " + problem.LockDate);
+                    Console.WriteLine("Default Due Date: " + problem.DueDate);
+                    Console.WriteLine("Default Lock Date: " + problem.LockDate);
                     Console.WriteLine("Max Grade: " + problem.MaxGrade);
+
+                    foreach (dynamic oride in resp.overrides)
+                    {
+                        foreach (dynamic id in oride.student_ids)
+                        {
+                            overrides[(int)id] = new Tuple<DateTime, DateTime>(Convert.ToDateTime(oride.due_at).ToLocalTime(), Convert.ToDateTime(oride.lock_at).ToLocalTime());
+                        }
+                    }
                 }
                 else
                 {
@@ -332,9 +371,9 @@ namespace KattisGrading
                 String url = "https://utah.kattis.com/login";
                 var values = new Dictionary<string, string>
                 {
-                    { "user", KATTIS_LOGIN },
-                    { "password", KATTIS_PASSWORD },
-                    {"submit", "Submit" },
+                    { "user", Auth.KATTIS_LOGIN },
+                    { "password", Auth.KATTIS_PASSWORD },
+                    { "submit", "Submit" },
                     {"csrf_token", csrfToken }
                 };
 
@@ -352,7 +391,7 @@ namespace KattisGrading
             dynamic exported;
             using (HttpClient client = CreateClient(REDIRECT))
             {
-                String url = String.Format("https://utah.kattis.com/courses/{0}/{1}/export?type=results&submissions=all&include_testcases=true", KATTIS_COURSE, KATTIS_SEMESTER);
+                String url = String.Format("https://utah.kattis.com/courses/{0}/{1}/export?type=results&submissions=all&include_testcases=true", Auth.KATTIS_COURSE, Auth.KATTIS_SEMESTER);
                 //client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/57.0");
                 //client.DefaultRequestHeaders.Referrer = new Uri("https://utah.kattis.com/courses/CS4150/S18/export");
                 //client.DefaultRequestHeaders.Host = "utah.kattis.com";
@@ -372,23 +411,6 @@ namespace KattisGrading
                 }
             }
 
-            // Get the name of the Kattis problem
-            bool foundName = false;
-            foreach (dynamic problem in exported.problemgroups[0].problems)
-            {
-                if (problem.problem_name == assignName)
-                {
-                    Console.WriteLine("Problem: " + problem.title);
-                    foundName = true;
-                    break;
-                }
-            }
-            if (!foundName)
-            {
-                Console.WriteLine("Problem finding Kattis problem: " + assignName);
-                return;
-            }
-
             // Get the number of test cases
             problem.PrivateTests = -1;
             List<Grade> grades = new List<Grade>();
@@ -397,7 +419,7 @@ namespace KattisGrading
             {
                 foreach (dynamic submission in student.submissions)
                 {
-                    if (submission.problem == assignName && submission.testcase_count != null)
+                    if (submission.problem == problemName && submission.testcase_count != null)
                     {
                         int tests = Convert.ToInt32(submission.testcase_count.ToString());
                         Console.WriteLine("Total tests: " + tests);
@@ -415,9 +437,10 @@ namespace KattisGrading
             }
 
             Dictionary<string, string> allStudents = new Dictionary<string, string>();
+            Dictionary<string, int> allIDs = new Dictionary<string, int>();
             using (HttpClient client = CreateClient(REDIRECT | AUTH))
             {
-                string url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/search_users?enrollment_type[]=student&per_page=200", courseID);
+                string url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/search_users?enrollment_type[]=student&per_page=200", Auth.COURSE_ID);
                 while (url != null)
                 {
                     HttpResponseMessage response = client.GetAsync(url).Result;
@@ -428,6 +451,7 @@ namespace KattisGrading
                         foreach (dynamic user in resp)
                         {
                             allStudents[user.sis_user_id.ToString()] = user.name.ToString();
+                            allIDs[user.sis_user_id.ToString()] = (int)user.id;
                         }
                         url = GetNextURL(response.Headers);
                     }
@@ -453,15 +477,21 @@ namespace KattisGrading
             Gradebook gradebook = new Gradebook(exported);
             foreach (string unid in allStudents.Keys)
             {
-                Grade g = gradebook.GetGrade(unid, assignName, problem);
+                // Get due and lock dates for this student.  They can differ because of extensions.
+                DateTime dueDate;
+                DateTime lockDate;
+                getDueAndLockDate(allIDs[unid], overrides, out dueDate, out lockDate);
+
+                Grade g = gradebook.GetGrade(unid, problemName, problem, dueDate, lockDate);
+
                 string compareResult = "";
 
                 if (compareGrades)
                 {
                     using (HttpClient client = CreateClient(REDIRECT | AUTH))
                     {
-                        String url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/assignments/{1}/submissions/sis_user_id:{2}", courseID, problem.AssignID, unid);
-                        
+                        String url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/assignments/{1}/submissions/sis_user_id:{2}", Auth.COURSE_ID, assignID, unid);
+
                         HttpResponseMessage response = client.GetAsync(url).Result;
 
                         int oldGrade = -1;
@@ -496,6 +526,11 @@ namespace KattisGrading
 
                 Console.WriteLine();
                 Console.WriteLine(allStudents[unid] + " " + unid);
+                if (g.DueDate != problem.DueDate || g.LockDate != problem.LockDate)
+                {
+                    Console.WriteLine("   " + "Due " + g.DueDate + "  " + "Locked " + g.LockDate);
+                    Console.WriteLine("   " + "Due " + problem.DueDate + "  " + "Locked " + problem.LockDate);
+                }
 
                 if (problem.SkipUsers.Contains(unid))
                 {
@@ -523,7 +558,7 @@ namespace KattisGrading
                         string data = "submission[posted_grade]=" + g.Score;
                         data += "&comment[text_comment]=" + Uri.EscapeDataString(g.Comment);
 
-                        string url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/assignments/{1}/submissions/sis_user_id:{2}", courseID, problem.AssignID, unid);
+                        string url = String.Format("https://utah.instructure.com/api/v1/courses/{0}/assignments/{1}/submissions/sis_user_id:{2}", Auth.COURSE_ID, assignID, unid);
                         StringContent content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
                         HttpResponseMessage response = client.PutAsync(url, content).Result;
 
@@ -540,6 +575,20 @@ namespace KattisGrading
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the due and lock dates for the student for the assignment.
+        /// </summary>
+        private static void getDueAndLockDate(int id, Dictionary<int, Tuple<DateTime,DateTime>> extensions, out DateTime dueDate, out DateTime lockDate)
+        {
+            dueDate = problem.DueDate;
+            lockDate = problem.LockDate;
+            if (extensions.TryGetValue(id, out Tuple<DateTime,DateTime> extension))
+            {
+                dueDate = extension.Item1;
+                lockDate = extension.Item2;
             }
         }
     }

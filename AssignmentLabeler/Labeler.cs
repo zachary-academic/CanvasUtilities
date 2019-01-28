@@ -1,76 +1,41 @@
-﻿using Newtonsoft.Json;
+﻿using Authentication;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
-using System.Text.RegularExpressions;
 
-namespace AssignmentLabeler
+namespace CanvasUtilities
 {
     /// <summary>
-    /// To use:
-    /// (1) Set TOKEN if necessary
-    /// (2) Set courseID if necessary
-    /// (3) Set assignID
+    /// Adds a note to each student's grade for a specified assignment.  The main purpose of doing this is to
+    /// let the student know who is responsible for the assignment so they know who to contact with questions.
     /// </summary>
-    class GradeRecorder
+    public class AssignmentLabeler
     {
-        // Canvas acccess token
-        private static string TOKEN = "2~XJE0CRdKd4XUePwp2XLT1uC6yLspVfkLy2F32LrUBJ7ggUmoi3oqobON75QkYNJO";
-
-        // Spring 2018
-        private static string courseID = "475628";
-        private static string assignID = "4525677";
-
-        /// <summary>
-        /// Creates an HttpClient for communicating with GitHub.  The GitHub API requires specific information
-        /// to appear in each request header.
-        /// </summary>
-        public static HttpClient CreateClient()
-        {
-            // Create a client whose base address is the Canvas server and that carries an authorization token
-            HttpClient client = new HttpClient
-            {
-                BaseAddress = new Uri("https://utah.instructure.com")
-            };
-            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + TOKEN);
-            return client;
-        }
-
-        private static string GetNextURL(HttpResponseHeaders headers)
-        {
-            string allHeaders = headers.ToString();
-            Regex r = new Regex("<([^<>]*)>; rel=\"next\"");
-            Match m = r.Match(allHeaders);
-            if (m.Success)
-            {
-                return m.Groups[1].ToString();
-            }
-            else
-            {
-                return null;
-            }
-        }
+        // This is the note that we will be added to each student's grade.  Customize it as necessary.
+        private static string message = "Contact me via Piazza if you have any questions.  Please note that " +
+            "some answers that were marked wrong by the auto-grader may have been given points during a manual " +
+            "regrade.  If so, any points awarded will be displayed even though the answer is marked wrong.  " +
+            "Please look carefully before contacting me.";
 
         /// <summary>
-        /// Obtains the logs
+        /// Adds a note to each student's grade
         /// </summary>
         public static void Main(string[] args)
         {
             // Get the course name
             String courseName = "";
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/api/v1/courses/{0}", courseID);
+                string url = String.Format("/api/v1/courses/{0}", Auth.COURSE_ID);
                 HttpResponseMessage response = client.GetAsync(url).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
                     dynamic resp = JObject.Parse(response.Content.ReadAsStringAsync().Result);
                     courseName = resp.name;
+                    Console.WriteLine("Labeler for " + courseName);
                 }
                 else
                 {
@@ -81,36 +46,40 @@ namespace AssignmentLabeler
                 }
             }
 
-            // Get the assignment name
-            String assignName;
-            using (HttpClient client = CreateClient())
+            // Get the assignment ID
+            string assignID;
+            Console.Write("Enter assignment name: ");
+            string assignName = Console.ReadLine();
+            List<string> assignmentIDs = CanvasHttp.GetAssignmentIDs(assignName);
+            if (assignmentIDs.Count == 0)
             {
-                string url = String.Format("/api/v1/courses/{0}/assignments/{1} ", courseID, assignID);
-                HttpResponseMessage response = client.GetAsync(url).Result;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    dynamic resp = JObject.Parse(response.Content.ReadAsStringAsync().Result);
-                    assignName = resp.name;
-                }
-                else
-                {
-                    Console.WriteLine("Error: " + response.StatusCode);
-                    Console.WriteLine(response.ReasonPhrase.ToString());
-                    Console.WriteLine("Unable to read assignment");
-                    return;
-                }
+                Console.WriteLine("There is no assigment by that name");
+                return;
+            }
+            else if (assignmentIDs.Count > 1)
+            {
+                Console.WriteLine("There are " + assignmentIDs.Count + " assignments by that name");
+                return;
+            }
+            else
+            {
+                assignID = assignmentIDs[0];
             }
 
-            Console.WriteLine("You are about to label the submissions for " + courseName + " " + assignName);
+            // Confirm with the user
+            Console.WriteLine("You are about to label the submissions for " + courseName + " " + assignName + " with this message: ");
+            Console.WriteLine();
+            Console.WriteLine(message);
+            Console.WriteLine();
             Console.WriteLine("Do you want to continue? [y/n]");
             String yesno = Console.ReadLine();
             if (yesno != "y") return;
 
+            // Get the students
             Dictionary<string, string> allStudents = new Dictionary<string, string>();
-            using (HttpClient client = CreateClient())
+            using (HttpClient client = CanvasHttp.MakeClient())
             {
-                string url = String.Format("/api/v1/courses/{0}/search_users?enrollment_type[]=student&per_page=200", courseID);
+                string url = String.Format("/api/v1/courses/{0}/search_users?enrollment_type[]=student&per_page=200", Auth.COURSE_ID);
                 while (url != null)
                 {
                     HttpResponseMessage response = client.GetAsync(url).Result;
@@ -123,7 +92,7 @@ namespace AssignmentLabeler
                             allStudents[user.id.ToString()] = user.name.ToString();
                             //allStudents[user.sis_user_id.ToString()] = user.name.ToString();
                         }
-                        url = GetNextURL(response.Headers);
+                        url = CanvasHttp.GetNextURL(response.Headers);
                     }
                     else
                     {
@@ -136,12 +105,13 @@ namespace AssignmentLabeler
                 Console.WriteLine("Student count: " + allStudents.Count);
             }
 
+            // Do the labeling
             foreach (string id in allStudents.Keys)
             {
-                using (HttpClient client = CreateClient())
+                using (HttpClient client = CanvasHttp.MakeClient())
                 {
-                    string data = "&comment[text_comment]=" + Uri.EscapeDataString("If you have questions, contact TANYA (if your last name comes before LIN alphabetically) or JOE (otherwise)");
-                    string url = String.Format("/api/v1/courses/{0}/assignments/{1}/submissions/{2}", courseID, assignID, id);
+                    string data = "&comment[text_comment]=" + Uri.EscapeDataString(message);
+                    string url = String.Format("/api/v1/courses/{0}/assignments/{1}/submissions/{2}", Auth.COURSE_ID, assignID, id);
                     //string url = String.Format("/api/v1/courses/{0}/assignments/{1}/submissions/sis_user_id:{2}", courseID, assignID, id);
 
                     StringContent content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
